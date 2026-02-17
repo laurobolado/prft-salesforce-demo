@@ -1,0 +1,42 @@
+-- depends_on: {{ ref('stg_salesforce__lead') }}
+with spine as (
+    {% if execute %}
+        {%- set first_date_query %}
+            select 
+                coalesce(
+                    min(cast(created_date as date)), 
+                    cast({{ dbt.dateadd("month", -1, "current_date") }} as date)
+                    ) as min_date
+                from {{ ref('stg_salesforce__lead') }}
+        {% endset -%}
+    
+        {% set last_date_query %}
+            select 
+                coalesce(
+                    greatest(max(cast(created_date as date)), cast(current_date as date)),
+                    cast(current_date as date)
+                    ) as max_date
+                from {{ ref('stg_salesforce__lead') }}
+        {% endset -%}
+    {% else %}
+        {%- set first_date_query%}
+            select cast({{ dbt.dateadd("month", -1, "current_date") }} as date)
+        {% endset -%}
+    
+        {% set last_date_query %}
+            select cast({{ dbt.current_timestamp_backcompat() }} as date)
+        {% endset -%}
+    {% endif %}
+
+    {%- set first_date = dbt_utils.get_single_value(first_date_query) %}
+    {%- set last_date = dbt_utils.get_single_value(last_date_query) %}
+
+    {{ dbt_utils.date_spine(
+        datepart="day",
+        start_date="cast('" ~ first_date ~ "' as date)",
+        end_date=dbt.dateadd("day", 1, "cast('" ~ last_date  ~ "' as date)")
+        )
+    }}
+)
+select * 
+from spine

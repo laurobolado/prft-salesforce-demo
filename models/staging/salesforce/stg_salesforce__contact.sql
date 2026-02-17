@@ -1,0 +1,84 @@
+with 
+
+source as (
+
+    select * from {{ source('salesforce', 'contact') }}
+
+),
+
+renamed as (
+
+    select
+        id as contact_id,
+        is_deleted,
+        master_record_id,
+        account_id,
+        last_name,
+        first_name,
+        salutation,
+        name as contact_name,
+        other_street,
+        other_city,
+        other_state,
+        other_postal_code,
+        other_country,
+        other_state_code,
+        other_country_code,
+        other_latitude,
+        other_longitude,
+        other_geocode_accuracy,
+        mailing_street,
+        mailing_city,
+        mailing_state,
+        mailing_postal_code,
+        mailing_country,
+        mailing_state_code,
+        mailing_country_code,
+        mailing_latitude,
+        mailing_longitude,
+        mailing_geocode_accuracy,
+        phone,
+        fax,
+        mobile_phone,
+        home_phone,
+        other_phone,
+        assistant_phone,
+        reports_to_id,
+        email,
+        title,
+        department,
+        assistant_name,
+        lead_source,
+        birthdate,
+        description as contact_description,
+        owner_id,
+        created_date,
+        created_by_id,
+        last_modified_date,
+        last_modified_by_id,
+        system_modstamp,
+        last_activity_date,
+        last_curequest_date,
+        last_cuupdate_date,
+        last_viewed_date,
+        last_referenced_date,
+        email_bounced_reason,
+        email_bounced_date,
+        is_email_bounced,
+        photo_url,
+        jigsaw,
+        jigsaw_contact_id,
+        clean_status,
+        individual_id,
+        is_priority_record,
+        contact_source,
+        level_c,
+        languages_c,
+        _fivetran_deleted,
+        _fivetran_synced
+
+    from source
+
+)
+
+select * from renamed
